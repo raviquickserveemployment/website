@@ -208,6 +208,10 @@
               <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
               <a href="#terms-lightbox" class="cta-btn">View Terms of Buisness</a>
 			  
+              <a href="WHIMS.png" class="glightbox">
+                <button class="btn btn-primary">WHIMS Symbols</button>
+              </a>
+              
 			  <!-- Terms Lightbox -->
 			<div id="terms-lightbox" class="terms-content" style="display: none;">
 				<h4>Terms of Business and Guidelines</h4>
@@ -398,6 +402,14 @@
 		}
 	  });
 	</script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const lightbox = GLightbox({
+      selector: '.glightbox'
+    });
+  });
+</script>
 
   <!-- Main JS File -->
   <script src="main.js"></script>
