@@ -16,12 +16,12 @@ jobs:
       - name: Get issue details
         id: issue
         run: |
-          BODY=$(jq -r '.issue.body' $GITHUB_EVENT_PATH | sed 's/\\n/\n/g')
+          BODY=$(jq -r '.issue.body' $GITHUB_EVENT_PATH)
 
-          echo "JOB_TITLE=$(echo "$BODY" | awk '/### Job Title/{getline; print}' | xargs)" >> $GITHUB_ENV
-          echo "LOCATION=$(echo "$BODY" | awk '/### Job Location/{getline; print}' | xargs)" >> $GITHUB_ENV
-          echo "AREA=$(echo "$BODY" | awk '/### Occupational Area/{getline; print}' | xargs)" >> $GITHUB_ENV
-          echo "DATE=$(echo "$BODY" | awk '/### Publish Date/{getline; print}' | xargs)" >> $GITHUB_ENV
+          echo "JOB_TITLE=$(echo "$BODY" | awk -v RS='' '/### Job Title/{getline; print}' | xargs)" >> $GITHUB_ENV
+          echo "LOCATION=$(echo "$BODY" | awk -v RS='' '/### Job Location/{getline; print}' | xargs)" >> $GITHUB_ENV
+          echo "AREA=$(echo "$BODY" | awk -v RS='' '/### Occupational Area/{getline; print}' | xargs)" >> $GITHUB_ENV
+          echo "DATE=$(echo "$BODY" | awk -v RS='' '/### Publish Date/{getline; print}' | xargs)" >> $GITHUB_ENV
 
 
 
