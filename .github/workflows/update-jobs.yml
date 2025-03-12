@@ -9,14 +9,14 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-
+        
       - name: Get issue details
         id: issue
         run: |
           echo "JOB_TITLE=$(jq -r '.issue.title' $GITHUB_EVENT_PATH | sed 's/New Job: //')" >> $GITHUB_ENV
-          echo "LOCATION=$(jq -r '.issue.body' $GITHUB_EVENT_PATH | grep -A1 'Job Location' | tail -1)" >> $GITHUB_ENV
-          echo "AREA=$(jq -r '.issue.body' $GITHUB_EVENT_PATH | grep -A1 'Occupational Area' | tail -1)" >> $GITHUB_ENV
-          echo "DATE=$(jq -r '.issue.body' $GITHUB_EVENT_PATH | grep -A1 'Publish Date' | tail -1)" >> $GITHUB_ENV
+          echo "LOCATION=$(jq -r '.issue.body' $GITHUB_EVENT_PATH | sed -n 's/.*Job Location: \(.*\)/\1/p')" >> $GITHUB_ENV
+          echo "AREA=$(jq -r '.issue.body' $GITHUB_EVENT_PATH | sed -n 's/.*Occupational Area: \(.*\)/\1/p')" >> $GITHUB_ENV
+          echo "DATE=$(jq -r '.issue.body' $GITHUB_EVENT_PATH | sed -n 's/.*Publish Date: \(.*\)/\1/p')" >> $GITHUB_ENV
 
       - name: Update jobs.json
         run: |
