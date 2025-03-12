@@ -17,9 +17,9 @@ jobs:
         id: issue
         run: |
           echo "JOB_TITLE=$(jq -r '.issue.title' $GITHUB_EVENT_PATH | sed 's/New Job: //')" >> $GITHUB_ENV
-          echo "LOCATION=$(jq -r '.issue.body[] | select(.id == \"location\").attributes.label' $GITHUB_EVENT_PATH)" >> $GITHUB_ENV
-          echo "AREA=$(jq -r '.issue.body[] | select(.id == \"area\").attributes.label' $GITHUB_EVENT_PATH)" >> $GITHUB_ENV
-          echo "DATE=$(jq -r '.issue.body[] | select(.id == \"date\").attributes.label' $GITHUB_EVENT_PATH)" >> $GITHUB_ENV
+          echo "LOCATION=$(jq -r '.issue.body' $GITHUB_EVENT_PATH | grep -A1 'Job Location' | tail -1 | xargs)" >> $GITHUB_ENV
+          echo "AREA=$(jq -r '.issue.body' $GITHUB_EVENT_PATH | grep -A1 'Occupational Area' | tail -1 | xargs)" >> $GITHUB_ENV
+          echo "DATE=$(jq -r '.issue.body' $GITHUB_EVENT_PATH | grep -A1 'Publish Date' | tail -1 | xargs)" >> $GITHUB_ENV
 
       - name: Update jobs.json
         run: |
