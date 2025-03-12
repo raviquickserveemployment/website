@@ -458,7 +458,7 @@
             return response.json();
         })
         .then(secretData => {
-            const token = secretData.GITHUB_TOKEN;
+            const token = secretData.GH_PAT;
 
             return fetch(issuesUrl, {
                 headers: {
