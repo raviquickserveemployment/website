@@ -16,10 +16,13 @@ jobs:
       - name: Get issue details
         id: issue
         run: |
-          echo "JOB_TITLE=$(jq -r '.issue.body' $GITHUB_EVENT_PATH | awk -F '\n' '/### Job Title/{getline; print}' | xargs)" >> $GITHUB_ENV
-          echo "LOCATION=$(jq -r '.issue.body' $GITHUB_EVENT_PATH | awk -F '\n' '/### Job Location/{getline; print}' | xargs)" >> $GITHUB_ENV
-          echo "AREA=$(jq -r '.issue.body' $GITHUB_EVENT_PATH | awk -F '\n' '/### Occupational Area/{getline; print}' | xargs)" >> $GITHUB_ENV
-          echo "DATE=$(jq -r '.issue.body' $GITHUB_EVENT_PATH | awk -F '\n' '/### Publish Date/{getline; print}' | xargs)" >> $GITHUB_ENV
+          BODY=$(jq -r '.issue.body' $GITHUB_EVENT_PATH | sed 's/\\n/\n/g')
+
+          echo "JOB_TITLE=$(echo "$BODY" | awk '/### Job Title/{getline; print}' | xargs)" >> $GITHUB_ENV
+          echo "LOCATION=$(echo "$BODY" | awk '/### Job Location/{getline; print}' | xargs)" >> $GITHUB_ENV
+          echo "AREA=$(echo "$BODY" | awk '/### Occupational Area/{getline; print}' | xargs)" >> $GITHUB_ENV
+          echo "DATE=$(echo "$BODY" | awk '/### Publish Date/{getline; print}' | xargs)" >> $GITHUB_ENV
+
 
 
       - name: Update jobs.json
