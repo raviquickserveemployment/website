@@ -9,15 +9,17 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-            
+
+      - name: Debug Issue JSON
+        run: cat $GITHUB_EVENT_PATH
+
       - name: Get issue details
         id: issue
         run: |
           echo "JOB_TITLE=$(jq -r '.issue.title' $GITHUB_EVENT_PATH | sed 's/New Job: //')" >> $GITHUB_ENV
-          echo "LOCATION=$(jq -r '.issue.body[] | select(.id == \"location\") | .value' $GITHUB_EVENT_PATH)" >> $GITHUB_ENV
-          echo "AREA=$(jq -r '.issue.body[] | select(.id == \"area\") | .value' $GITHUB_EVENT_PATH)" >> $GITHUB_ENV
-          echo "DATE=$(jq -r '.issue.body[] | select(.id == \"date\") | .value' $GITHUB_EVENT_PATH)" >> $GITHUB_ENV
-
+          echo "LOCATION=$(jq -r '.issue.body[] | select(.id == \"location\").attributes.label' $GITHUB_EVENT_PATH)" >> $GITHUB_ENV
+          echo "AREA=$(jq -r '.issue.body[] | select(.id == \"area\").attributes.label' $GITHUB_EVENT_PATH)" >> $GITHUB_ENV
+          echo "DATE=$(jq -r '.issue.body[] | select(.id == \"date\").attributes.label' $GITHUB_EVENT_PATH)" >> $GITHUB_ENV
 
       - name: Update jobs.json
         run: |
