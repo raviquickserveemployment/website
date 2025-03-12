@@ -3,17 +3,17 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches:
-      - main  # Change if needed
+      - main
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Upload Secret File as an Artifact
-        uses: actions/upload-artifact@v4  # ✅ Updated to v4
+      - name: Checkout Repository
+        uses: actions/checkout@v3
         with:
-          name: secret-file
-          path: secret.json
+          persist-credentials: false  # Ensures that credentials are reset for deployment
+          fetch-depth: 0  # Ensures full Git history is available
 
       - name: Inject Secret into JSON File
         run: |
@@ -25,8 +25,17 @@ jobs:
           name: secret-file
           path: secret.json
 
+      - name: Ensure Git is Initialized
+        run: |
+          git init
+          git remote add origin https://github.com/raviquickserveemployment/website.git
+          git fetch origin gh-pages
+          git reset --hard origin/gh-pages
+
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          branch: gh-pages  # Deploy to GitHub Pages branch
+          branch: gh-pages
           folder: .
+          clean: true
+          token: ${{ secrets.GH_PAT }}  # Ensure this is a valid PAT with write permissions
