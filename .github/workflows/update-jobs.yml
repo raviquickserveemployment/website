@@ -28,7 +28,7 @@ jobs:
           jq --arg title "$JOB_TITLE" --arg location "$LOCATION" --arg area "$AREA" --arg date "$DATE" \
           '. += [{"title": $title, "location": $location, "area": $area, "date": $date}]' jobs.json > temp.json && mv temp.json jobs.json
           
-          cat assets/data/jobs.json 
+          cat jobs.json 
           
       - name: Commit and push changes
         run: |
