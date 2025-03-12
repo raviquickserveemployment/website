@@ -9,8 +9,11 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
+      - name: Upload Secret File as an Artifact
+        uses: actions/upload-artifact@v4  # ✅ Updated to v4
+        with:
+          name: secret-file
+          path: secret.json
 
       - name: Inject Secret into JSON File
         run: |
