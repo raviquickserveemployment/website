@@ -62,6 +62,7 @@
           <li><a href="#hero" class="active">Home<br></a></li>
           <li><a href="#employees">Employees</a></li>
           <li><a href="#employers">Employers</a></li> 
+          <li><a href="#jobs">Job Postings</a></li> 
           <li><a href="#terms-of-service">Terms of service</a></li>          
           <li><a href="#contact">Contact</a></li>
         </ul>
@@ -83,7 +84,7 @@
       <div class="container">
         <div class="row justify-content-center" data-aos="zoom-out">
           <div class="col-xl-7 col-lg-9 text-center">
-            <h1>Temporary employment staffing provider</h1>
+            <h1>Temporary & Permanent employment staffing provider</h1>
             <p style="color: black;">Individuals looking for a job can send their resume using our online application form and one of our specialists will contact you as soon as possible. If you are a Companies you can use our online system to post a job and we will refer the best candidates to fit your needs.</p>
           </div>
         </div>
@@ -104,7 +105,7 @@
             <div class="icon-box">
               <div class="icon"><i class="bi bi-person-badge"></i></div>
               <h4 class="title"><a href="">Specialist</a></h4>
-              <p class="description">On temporary and permanant placements</p>
+              <p class="description">On temporary and permanent placements</p>
             </div>
           </div><!--End Icon Box -->
 
@@ -175,7 +176,7 @@
                 </svg>
                 <i class="bi bi-hammer"></i>
               </div>
-              <a href="service-details.html" class="stretched-link">
+              <a class="stretched-link">
                 <h3>Factory</h3>
               </a>
               <p>We have both the skilled and non-skilled workers such as General Labour, Welders, Forklift Operators, CNC Operator, Machine Operators, Shipper | Receiver</p>
@@ -190,7 +191,7 @@
                 </svg>
                 <i class="bi bi-laptop"></i>
               </div>
-              <a href="service-details.html" class="stretched-link">
+              <a class="stretched-link">
                 <h3>Office</h3>
               </a>
               <p>We have the experienced personnel such as Office Helpers, Computer Operators, Web Page Designers | Web Administrators</p>
@@ -203,6 +204,40 @@
       </div>
 
     </section><!-- /Services Section -->
+
+    <!-- Jobs Section -->
+    <section id="jobs" class="jobs section">
+      <div class="container">
+          <div class="section-title">
+              <h2>Job Listings</h2>
+          </div>           
+  
+          <!-- Job Listings Table -->
+          <div class="table-responsive">
+              <table class="table table-striped">
+                  <thead>
+                      <tr>
+                          <th>Job Title</th>
+                          <th>Location</th>
+                          <th>Occupational Area</th>
+                          <th>Publish Date</th>
+                          <th>Action</th>
+                      </tr>
+                  </thead>
+                  <tbody id="job-table-body">
+                      <!-- Jobs will be inserted here dynamically -->
+                  </tbody>
+              </table>
+          </div>
+          <!-- No Jobs Message -->
+          <p id="no-jobs-message" class="text-center text-muted" style="display: none;">
+            No jobs are available at the moment. Please check back later.
+          </p>
+      </div>
+  </section>
+  
+  <!-- /Jobs Section -->
+   
 
     <!-- Call To Action Section -->
     <section id="terms-of-service" class="call-to-action section accent-background">
@@ -326,8 +361,13 @@
 				  <input type="file" class="form-control" name="file" accept=".pdf,.doc,.docx,.jpg,.png" title="Only PDF, DOC, DOCX, JPG, and PNG files are allowed.">
 				</div>
 
+        
+        <div class="col-md-12">
+          <input type="text" placeholder="Subject" class="form-control" id="subject" name="subject" required>
+        </div>
+
 				<div class="col-md-12">
-				  <textarea class="form-control" name="message" rows="6" placeholder="Message"></textarea>
+				  <textarea class="form-control" name="message" id="message" rows="6" placeholder="Message"></textarea>
 				</div>
 				
 				<!-- Honeypot Field (Hidden from Users) -->
@@ -406,6 +446,81 @@
       selector: '.glightbox'
     });
   });
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const repoOwner = "raviquickserveemployment"; // GitHub username or org
+    const repoName = "website"; // Repository name
+    const token = "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"; 
+    const issuesUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/issues`;
+
+    fetch(issuesUrl, {
+        headers: {
+            "Authorization": `token ${token}`,
+            "Accept": "application/vnd.github.v3+json"
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`GitHub API Error: ${response.statusText}`);
+        }
+        return response.json();
+    })
+    .then(issues => {
+        const jobTableBody = document.getElementById("job-table-body");
+        const noJobsMessage = document.getElementById("no-jobs-message");
+
+        jobTableBody.innerHTML = ""; // Clear previous content
+
+        if (issues.length === 0) {
+            noJobsMessage.style.display = "block"; // Show "No jobs available" message
+        } else {
+            noJobsMessage.style.display = "none"; // Hide message if jobs are found
+            issues.forEach(issue => {
+                const jobTitle = issue.title;
+                const issueBody = issue.body;
+
+                const location = issueBody.match(/### Job Location\s*\n(.*)/)?.[1] || "Not specified";
+                const area = issueBody.match(/### Occupational Area\s*\n(.*)/)?.[1] || "Not specified";
+                const publishDate = issueBody.match(/### Publish Date\s*\n(.*)/)?.[1] || "Not specified";
+
+                let jobRow = document.createElement("tr");
+                jobRow.innerHTML = `
+                    <td>${jobTitle}</td>
+                    <td>${location}</td>
+                    <td>${area}</td>
+                    <td>${publishDate}</td>
+                    <td>
+                        <button class="btn btn-primary apply-btn"
+                                data-title="${jobTitle}" 
+                                data-location="${location}" 
+                                data-area="${area}" 
+                                data-date="${publishDate}">
+                            Apply
+                        </button>
+                    </td>
+                `;
+                jobTableBody.appendChild(jobRow);
+            });
+
+            document.querySelectorAll(".apply-btn").forEach(button => {
+                button.addEventListener("click", function () {
+                    const jobTitle = this.getAttribute("data-title");
+                    const location = this.getAttribute("data-location");
+                    const area = this.getAttribute("data-area");
+                    const publishDate = this.getAttribute("data-date");
+
+                    document.getElementById("subject").value = `I am interested in ${jobTitle}`;
+                    document.getElementById("message").value = `Job Location: ${location}\nOccupational Area: ${area}\nPublished Date: ${publishDate}`;
+
+                    document.getElementById("contact").scrollIntoView({ behavior: "smooth" });
+                });
+            });
+        }
+    })
+    .catch(error => console.error("Error fetching job listings:", error));
+});
+
+
 
 </script>
 
