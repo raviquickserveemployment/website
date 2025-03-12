@@ -12,8 +12,8 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
         with:
-          persist-credentials: false  # Ensures that credentials are reset for deployment
-          fetch-depth: 0  # Ensures full Git history is available
+          persist-credentials: false
+          fetch-depth: 0
 
       - name: Inject Secret into JSON File
         run: |
@@ -28,6 +28,7 @@ jobs:
       - name: Ensure Git is Initialized
         run: |
           git init
+          git remote remove origin || true
           git remote add origin https://github.com/raviquickserveemployment/website.git
           git fetch origin gh-pages
           git reset --hard origin/gh-pages
@@ -38,4 +39,4 @@ jobs:
           branch: gh-pages
           folder: .
           clean: true
-          token: ${{ secrets.GH_PAT }}  # Ensure this is a valid PAT with write permissions
+          token: ${{ secrets.GH_PAT }}
