@@ -447,77 +447,86 @@
     });
   });
 
-  document.addEventListener("DOMContentLoaded", function () {
+ document.addEventListener("DOMContentLoaded", function () {
     const repoOwner = "raviquickserveemployment"; // GitHub username or org
     const repoName = "website"; // Repository name
-    const token = "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"; 
-    const issuesUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/issues`;
+    const issuesUrl = "https://api.github.com/repos/${repoOwner}/${repoName}/issues";
 
-    fetch(issuesUrl, {
-        headers: {
-            "Authorization": `token ${token}`,
-            "Accept": "application/vnd.github.v3+json"
-        }
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error(`GitHub API Error: ${response.statusText}`);
-        }
-        return response.json();
-    })
-    .then(issues => {
-        const jobTableBody = document.getElementById("job-table-body");
-        const noJobsMessage = document.getElementById("no-jobs-message");
+    // Fetch the token from a secure JSON file
+    fetch("secret.json")
+        .then(response => {
+            if (!response.ok) throw new Error("Failed to load API key");
+            return response.json();
+        })
+        .then(secretData => {
+            const token = secretData.ISSUES_TOKEN;
 
-        jobTableBody.innerHTML = ""; // Clear previous content
-
-        if (issues.length === 0) {
-            noJobsMessage.style.display = "block"; // Show "No jobs available" message
-        } else {
-            noJobsMessage.style.display = "none"; // Hide message if jobs are found
-            issues.forEach(issue => {
-                const jobTitle = issue.title;
-                const issueBody = issue.body;
-
-                const location = issueBody.match(/### Job Location\s*\n(.*)/)?.[1] || "Not specified";
-                const area = issueBody.match(/### Occupational Area\s*\n(.*)/)?.[1] || "Not specified";
-                const publishDate = issueBody.match(/### Publish Date\s*\n(.*)/)?.[1] || "Not specified";
-
-                let jobRow = document.createElement("tr");
-                jobRow.innerHTML = `
-                    <td>${jobTitle}</td>
-                    <td>${location}</td>
-                    <td>${area}</td>
-                    <td>${publishDate}</td>
-                    <td>
-                        <button class="btn btn-primary apply-btn"
-                                data-title="${jobTitle}" 
-                                data-location="${location}" 
-                                data-area="${area}" 
-                                data-date="${publishDate}">
-                            Apply
-                        </button>
-                    </td>
-                `;
-                jobTableBody.appendChild(jobRow);
+            return fetch(issuesUrl, {
+                headers: {
+                    "Authorization": `token ${token}`,
+                    "Accept": "application/vnd.github.v3+json"
+                }
             });
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`GitHub API Error: ${response.statusText}`);
+            }
+            return response.json();
+        })
+        .then(issues => {
+            const jobTableBody = document.getElementById("job-table-body");
+            const noJobsMessage = document.getElementById("no-jobs-message");
 
-            document.querySelectorAll(".apply-btn").forEach(button => {
-                button.addEventListener("click", function () {
-                    const jobTitle = this.getAttribute("data-title");
-                    const location = this.getAttribute("data-location");
-                    const area = this.getAttribute("data-area");
-                    const publishDate = this.getAttribute("data-date");
+            jobTableBody.innerHTML = ""; // Clear previous content
 
-                    document.getElementById("subject").value = `I am interested in ${jobTitle}`;
-                    document.getElementById("message").value = `Job Location: ${location}\nOccupational Area: ${area}\nPublished Date: ${publishDate}`;
+            if (issues.length === 0) {
+                noJobsMessage.style.display = "block"; // Show "No jobs available" message
+            } else {
+                noJobsMessage.style.display = "none"; // Hide message if jobs are found
+                issues.forEach(issue => {
+                    const jobTitle = issue.title;
+                    const issueBody = issue.body;
 
-                    document.getElementById("contact").scrollIntoView({ behavior: "smooth" });
+                    const location = issueBody.match(/### Job Location\s*\n(.*)/)?.[1] || "Not specified";
+                    const area = issueBody.match(/### Occupational Area\s*\n(.*)/)?.[1] || "Not specified";
+                    const publishDate = issueBody.match(/### Publish Date\s*\n(.*)/)?.[1] || "Not specified";
+
+                    let jobRow = document.createElement("tr");
+                    jobRow.innerHTML = `
+                        <td>${jobTitle}</td>
+                        <td>${location}</td>
+                        <td>${area}</td>
+                        <td>${publishDate}</td>
+                        <td>
+                            <button class="btn btn-primary apply-btn"
+                                    data-title="${jobTitle}" 
+                                    data-location="${location}" 
+                                    data-area="${area}" 
+                                    data-date="${publishDate}">
+                                Apply
+                            </button>
+                        </td>
+                    `;
+                    jobTableBody.appendChild(jobRow);
                 });
-            });
-        }
-    })
-    .catch(error => console.error("Error fetching job listings:", error));
+
+                document.querySelectorAll(".apply-btn").forEach(button => {
+                    button.addEventListener("click", function () {
+                        const jobTitle = this.getAttribute("data-title");
+                        const location = this.getAttribute("data-location");
+                        const area = this.getAttribute("data-area");
+                        const publishDate = this.getAttribute("data-date");
+
+                        document.getElementById("subject").value = `I am interested in ${jobTitle}`;
+                        document.getElementById("message").value = `Job Location: ${location}\nOccupational Area: ${area}\nPublished Date: ${publishDate}`;
+
+                        document.getElementById("contact").scrollIntoView({ behavior: "smooth" });
+                    });
+                });
+            }
+        })
+        .catch(error => console.error("Error fetching job listings:", error));
 });
 
 
