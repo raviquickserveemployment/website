@@ -3,7 +3,7 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches:
-      - main  # Change if your branch is different
+      - main
 
 jobs:
   deploy:
@@ -11,21 +11,25 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
+        with:
+          persist-credentials: false  # Disable default GitHub Actions token
 
       - name: Inject Secret into JSON File
         run: |
-          echo '{ "ISSUES_TOKEN": "${{ secrets.ISSUES_TOKEN }}" }' > secret.json
+          echo '{ "GITHUB_TOKEN": "${{ secrets.GH_PAT }}" }' > secret.json
 
       - name: Commit and Push Changes
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
         run: |
           git config --global user.email "github-actions@github.com"
           git config --global user.name "GitHub Actions"
           git add secret.json
-          git commit -m "Add secret.json"
-          git push
+          git commit -m "Add secret.json" || echo "No changes to commit"
+          git push https://x-access-token:${{ secrets.GH_PAT }}@github.com/raviquickserveemployment/website.git main
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          branch: gh-pages  # Deploy to GitHub Pages branch
-          folder: .  # Deploy everything in the root folder
+          branch: gh-pages
+          folder: .
