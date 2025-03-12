@@ -30,9 +30,9 @@ jobs:
           git init
           git remote remove origin || true
           git remote add origin https://github.com/raviquickserveemployment/website.git
-          git fetch origin gh-pages
-          git reset --hard origin/gh-pages
-
+          git fetch origin main
+          git reset --hard origin/main
+          
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
