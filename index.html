@@ -450,81 +450,76 @@
  document.addEventListener("DOMContentLoaded", function () {
     const repoOwner = "raviquickserveemployment"; // GitHub username or org
     const repoName = "website"; // Repository name
+    const token = "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"; 
     const issuesUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/issues`;
 
-    fetch("secret.json")  // Fetch dynamically created secret.json
-        .then(response => {
-            if (!response.ok) throw new Error("Failed to load API key");
-            return response.json();
-        })
-        .then(secretData => {
-            const token = secretData.GITHUB_TOKEN;
+    fetch(issuesUrl, {
+        headers: {
+            "Authorization": `token ${token}`,
+            "Accept": "application/vnd.github.v3+json"
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`GitHub API Error: ${response.statusText}`);
+        }
+        return response.json();
+    })
+    .then(issues => {
+        const jobTableBody = document.getElementById("job-table-body");
+        const noJobsMessage = document.getElementById("no-jobs-message");
 
-            return fetch(issuesUrl, {
-                headers: {
-                    "Authorization": `token ${token}`,
-                    "Accept": "application/vnd.github.v3+json"
-                }
+        jobTableBody.innerHTML = ""; // Clear previous content
+
+        if (issues.length === 0) {
+            noJobsMessage.style.display = "block"; // Show "No jobs available" message
+        } else {
+            noJobsMessage.style.display = "none"; // Hide message if jobs are found
+            issues.forEach(issue => {
+                const jobTitle = issue.title;
+                const issueBody = issue.body;
+
+                const location = issueBody.match(/### Job Location\s*\n(.*)/)?.[1] || "Not specified";
+                const area = issueBody.match(/### Occupational Area\s*\n(.*)/)?.[1] || "Not specified";
+                const publishDate = issueBody.match(/### Publish Date\s*\n(.*)/)?.[1] || "Not specified";
+
+                let jobRow = document.createElement("tr");
+                jobRow.innerHTML = `
+                    <td>${jobTitle}</td>
+                    <td>${location}</td>
+                    <td>${area}</td>
+                    <td>${publishDate}</td>
+                    <td>
+                        <button class="btn btn-primary apply-btn"
+                                data-title="${jobTitle}" 
+                                data-location="${location}" 
+                                data-area="${area}" 
+                                data-date="${publishDate}">
+                            Apply
+                        </button>
+                    </td>
+                `;
+                jobTableBody.appendChild(jobRow);
             });
-        })
-        .then(response => response.json())
-        .then(issues => {
-            const jobTableBody = document.getElementById("job-table-body");
-            const noJobsMessage = document.getElementById("no-jobs-message");
 
-            jobTableBody.innerHTML = "";
+            document.querySelectorAll(".apply-btn").forEach(button => {
+                button.addEventListener("click", function () {
+                    const jobTitle = this.getAttribute("data-title");
+                    const location = this.getAttribute("data-location");
+                    const area = this.getAttribute("data-area");
+                    const publishDate = this.getAttribute("data-date");
 
-            if (issues.length === 0) {
-                noJobsMessage.style.display = "block";
-            } else {
-                noJobsMessage.style.display = "none";
-                issues.forEach(issue => {
-                    const jobTitle = issue.title;
-                    const issueBody = issue.body;
+                    document.getElementById("subject").value = `I am interested in ${jobTitle}`;
+                    document.getElementById("message").value = `Job Location: ${location}\nOccupational Area: ${area}\nPublished Date: ${publishDate}`;
 
-                    const location = issueBody.match(/### Job Location\s*\n(.*)/)?.[1] || "Not specified";
-                    const area = issueBody.match(/### Occupational Area\s*\n(.*)/)?.[1] || "Not specified";
-                    const publishDate = issueBody.match(/### Publish Date\s*\n(.*)/)?.[1] || "Not specified";
+                    document.getElementById("contact").scrollIntoView({ behavior: "smooth" });
 
-                    let jobRow = document.createElement("tr");
-                    jobRow.innerHTML = `
-                        <td>${jobTitle}</td>
-                        <td>${location}</td>
-                        <td>${area}</td>
-                        <td>${publishDate}</td>
-                        <td>
-                            <button class="btn btn-primary apply-btn"
-                                    data-title="${jobTitle}" 
-                                    data-location="${location}" 
-                                    data-area="${area}" 
-                                    data-date="${publishDate}">
-                                Apply
-                            </button>
-                        </td>
-                    `;
-                    jobTableBody.appendChild(jobRow);
                 });
-
-                document.querySelectorAll(".apply-btn").forEach(button => {
-                    button.addEventListener("click", function () {
-                        const jobTitle = this.getAttribute("data-title");
-                        const location = this.getAttribute("data-location");
-                        const area = this.getAttribute("data-area");
-                        const publishDate = this.getAttribute("data-date");
-
-                        document.getElementById("subject").value = `I am interested in ${jobTitle}`;
-                        document.getElementById("message").value = `Job Location: ${location}\nOccupational Area: ${area}\nPublished Date: ${publishDate}`;
-
-                        document.getElementById("contact").scrollIntoView({ behavior: "smooth" });
-                    });
-                });
-            }
-        })
-        .catch(error => console.error("Error fetching job listings:", error));
+            });
+        }
+    })
+    .catch(error => console.error("Error fetching job listings:", error));
 });
-
-
-
 
 </script>
 
