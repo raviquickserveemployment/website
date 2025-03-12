@@ -27,6 +27,6 @@ jobs:
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
-          git add assets/data/jobs.json
+          git add jobs.json
           git commit -m "Added new job: $JOB_TITLE"
           git push
