@@ -4,14 +4,6 @@ title: "New Job: [Job Title]"
 labels: ["job-listing"]
 body:
   - type: input
-    id: job_title
-    attributes:
-      label: "Job Title"
-      placeholder: "General Labour"
-    validations:
-      required: true
-
-  - type: input
     id: location
     attributes:
       label: "Job Location"
