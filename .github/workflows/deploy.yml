@@ -15,7 +15,7 @@ jobs:
 
       - name: Inject Secret into JavaScript File
         run: |
-          echo "const TOKEN = '${{ secrets.GH_TOKEN }}';" > token.js
+          echo "const TOKEN = '${{ secrets.GH_PAT }}';" > token.js
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
