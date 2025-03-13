@@ -452,18 +452,17 @@
  document.addEventListener("DOMContentLoaded", function () {
     const repoOwner = "raviquickserveemployment"; // GitHub username or org
     const repoName = "website"; // Repository name
-    const token = "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"; 
     const issuesUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/issues`;
 
     fetch(issuesUrl, {
         headers: {
-            "Authorization": 'token ${TOKEN}',
+            "Authorization": `token ${TOKEN}`, // Fix token reference
             "Accept": "application/vnd.github.v3+json"
         }
     })
     .then(response => {
         if (!response.ok) {
-            throw new Error('GitHub API Error: ${response.statusText}');
+            throw new Error(`GitHub API Error: ${response.statusText}`); // Fix template literal
         }
         return response.json();
     })
@@ -479,8 +478,9 @@
             noJobsMessage.style.display = "none"; // Hide message if jobs are found
             issues.forEach(issue => {
                 const jobTitle = issue.title;
-                const issueBody = issue.body;
+                const issueBody = issue.body || "";
 
+                // Extract job details using regex
                 const location = issueBody.match(/### Job Location\s*\n(.*)/)?.[1] || "Not specified";
                 const area = issueBody.match(/### Occupational Area\s*\n(.*)/)?.[1] || "Not specified";
                 const publishDate = issueBody.match(/### Publish Date\s*\n(.*)/)?.[1] || "Not specified";
@@ -504,6 +504,7 @@
                 jobTableBody.appendChild(jobRow);
             });
 
+            // Add event listener for "Apply" buttons
             document.querySelectorAll(".apply-btn").forEach(button => {
                 button.addEventListener("click", function () {
                     const jobTitle = this.getAttribute("data-title");
@@ -515,13 +516,13 @@
                     document.getElementById("message").value = `Job Location: ${location}\nOccupational Area: ${area}\nPublished Date: ${publishDate}`;
 
                     document.getElementById("contact").scrollIntoView({ behavior: "smooth" });
-
                 });
             });
         }
     })
     .catch(error => console.error("Error fetching job listings:", error));
 });
+
 
 </script>
 
