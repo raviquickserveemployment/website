@@ -457,13 +457,13 @@
 
     fetch(issuesUrl, {
         headers: {
-            "Authorization": `token ${token}`,
+            "Authorization": 'token ${TOKEN}',
             "Accept": "application/vnd.github.v3+json"
         }
     })
     .then(response => {
         if (!response.ok) {
-            throw new Error(`GitHub API Error: ${response.statusText}`);
+            throw new Error('GitHub API Error: ${response.statusText}');
         }
         return response.json();
     })
