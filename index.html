@@ -456,9 +456,9 @@
 
     fetch(issuesUrl, {
         headers: {
-            "Authorization": `token ${TOKEN}`, // Fix token reference
-            "Accept": "application/vnd.github.v3+json"
-        }
+        "Authorization": `token ${TOKEN}`, // Correct way for classic PAT
+        "Accept": "application/vnd.github.v3+json"
+    	}
     })
     .then(response => {
         if (!response.ok) {
