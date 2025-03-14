@@ -49,8 +49,6 @@
 	}
   </style>
 
-  <script src="token.js"></script>
-
 </head>
 
 <body class="index-page">
@@ -360,11 +358,10 @@
 				<div class="col-md-12">
 				  <input type="file" class="form-control" name="file" accept=".pdf,.doc,.docx,.jpg,.png" title="Only PDF, DOC, DOCX, JPG, and PNG files are allowed.">
 				</div>
-
         
-        <div class="col-md-12">
-          <input type="text" placeholder="Subject" class="form-control" id="subject" name="subject" required>
-        </div>
+			        <div class="col-md-12">
+			          <input type="text" placeholder="Subject" class="form-control" id="subject" name="subject" required>
+			        </div>
 
 				<div class="col-md-12">
 				  <textarea class="form-control" name="message" id="message" rows="6" placeholder="Message"></textarea>
@@ -395,6 +392,13 @@
       </div>
 
     </section><!-- /Contact Section -->
+
+  <section id="thanks" class="thanks section d-none">
+  <div class="container text-center">
+    <h2>Thank You!</h2>
+    <p>Thank you for reaching out to us. We will get back to you as soon as we can.</p>
+  </div>
+</section>
 
   </main>
 
@@ -445,6 +449,14 @@
     const lightbox = GLightbox({
       selector: '.glightbox'
     });
+    // Check if URL contains #thanks and display the message
+    if (window.location.hash === "#thanks") {
+	document.querySelector("#thanks").classList.remove("d-none");
+	// Modify form submission behavior
+	const form = document.querySelector(".php-email-form");
+	// Clear out the form fields
+	form.reset();
+    }
   });
 
  document.addEventListener("DOMContentLoaded", function () {
