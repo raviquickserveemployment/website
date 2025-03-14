@@ -449,13 +449,22 @@
     const lightbox = GLightbox({
       selector: '.glightbox'
     });
+    // Get the thanks section
+    const thanksSection = document.querySelector("#thanks");
     // Check if URL contains #thanks and display the message
     if (window.location.hash === "#thanks") {
-	document.querySelector("#thanks").classList.remove("d-none");
+	thanksSection.classList.remove("d-none");
 	// Modify form submission behavior
 	const form = document.querySelector(".php-email-form");
+	    
 	// Clear out the form fields
 	form.reset();
+	    
+	// Auto-hide the thanks section after 10 seconds
+	setTimeout(() => {
+	thanksSection.classList.add("d-none");
+	window.location.hash = ""; // Clear the URL hash
+	}, 10000);
     }
   });
 
